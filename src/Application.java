@@ -1,22 +1,72 @@
 import authentication.ValidationForUserDetails;
+import database.LogIn_DB;
 import database.SignUp_DB;
+import pojo.LogInUserDetails;
 import pojo.SignUpUserDetails;
 import utils.SendMail;
 
+import java.net.InetAddress;
 import java.util.Scanner;
 
 public class Application {
 
     public static void main(String[] args) {
 
+
+        System.out.println("1.Signup \n 2.Login");
+        switch (new Scanner(System.in).nextInt()) {
+            case 1:
+                signUp();
+                break;
+            case 2:
+                logIn();
+                break;
+            default:
+                System.out.println("select accorndingly");
+        }
+    }
+
+    private static void logIn() {
+        LogInUserDetails logIn = new LogInUserDetails();
+        LogIn_DB logIn_db = new LogIn_DB();
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Enter user name =");
+        logIn.setUserName(scan.next());
+        System.out.println("Enter password =");
+        logIn.setPassword(scan.next());
+        try {
+            logIn.setPass_ip(InetAddress.getLocalHost().getHostAddress());
+
+            //login process here
+
+         /*   if(logIn_db.initialPasswordLogin(logIn)){
+                System.out.println("Enter phase password =");
+                logIn.setPhasePassword(scan.next());
+                logIn.setPhase_ip(InetAddress.getLocalHost().getHostAddress());
+                if( logIn_db.phasePasswordLogin(logIn)) {
+                    System.out.println("Log in successfully..!");
+                }else {
+                    System.out.println("Phase password wrong..!");
+                }
+            }else {
+                System.out.println("username or password wrong...!");
+            }*/
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private static void signUp() {
         SignUp_DB signUp_db = new SignUp_DB();
         SendMail sendMail = new SendMail();
-
+        int OTP;
         SignUpUserDetails userDetails = getUserDetails();
-        //otp.sendMailToUser("ks.karthikumar@gmail.com");
         if (checkFieldFromUserDetails(userDetails)) {
             //signUp_db.insertUserDetails(userDetails);
-            int OTP = sendMail.sendMailToUser(userDetails.getUserEmail());
+            OTP = sendMail.sendMailToUser(userDetails.getUserEmail());
             if (sendMail.verifyOTP()) {
                 //signUp_db.updateOTP(OTP);
                 System.out.println("Account Create successfully..!");
@@ -69,4 +119,4 @@ public class Application {
         return signup;
     }
 }
-/* check changes on the git */
+
